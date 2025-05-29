@@ -17,7 +17,7 @@
 ### 1. Клонування репозиторію
 
 ```bash
-git clone <URL_репозиторію>
+git clone https://github.com/nastya-prokopishena/student_site_monolit_architecture.git
 cd <назва_папки_проєкту>
 ```
 
