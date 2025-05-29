@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Plato - form_application.js</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="../../assets/css/vendor/morris.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/bootstrap.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/font-awesome.css" rel="stylesheet">
+  <link href="../../assets/css/vendor/codemirror.css" rel="stylesheet">
+  <link href="../../assets/css/plato.css" rel="stylesheet">
+  <link href="../../assets/css/plato-file.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="http://github.com/es-analysis/plato">Plato on Github</a>
+    <ul class="nav navbar-nav">
+      <li>
+        <a href="../../index.html">Report Home</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div class="jumbotron">
+  <div class="container">
+    <h1>form_application.js</h1>
+  </div>
+</div>
+
+<div class="container aggregate-stats">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Maintainability <a href="http://blogs.msdn.com/b/codeanalysis/archive/2007/11/20/maintainability-index-range-and-meaning.aspx"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="A value between 0 and 100 that represents the relative ease of maintaining the code. A high value means better maintainability." data-original-title="Maintainability Index"  data-container="body"></i></a></h2>
+      <p class="stat">61.07</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Lines of code <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h2>
+      <p class="stat">289</p>
+    </div>
+  </div>
+  <div class="row historical">
+    <div class="col-md-6">
+      <p id="chart_historical_maint" class="chart"></p>
+    </div>
+    <div class="col-md-6">
+      <p id="chart_historical_sloc" class="chart"></p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="header">Difficulty  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="The difficulty measure is related to the difficulty of the program to write or understand." data-original-title="Difficulty" data-container="body"></i></a></h2>
+      <p class="stat">30.85</p>
+    </div>
+    <div class="col-md-6">
+      <h2 class="header">Estimated Errors  <a href="http://en.wikipedia.org/wiki/Halstead_complexity_measures"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Halstead's delivered bugs is an estimate for the number of errors in the implementation." data-original-title="Delivered Bugs" data-container="body"></i></a></h2>
+      <p class="stat">2.45</p>
+    </div>
+  </div>
+</div>
+
+<div class="container charts">
+  <div class="row">
+    <h2 class="header">Function weight</h2>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="chart-header">By Complexity <a href="http://en.wikipedia.org/wiki/Cyclomatic_complexity"><i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="This metric counts the number of distinct paths through a block of code. Lower values are better." data-original-title="Cyclomatic Complexity" data-container="body"></i></a></h3>
+      <div id="fn-by-complexity" class="stat"></div>
+    </div>
+    <div class="col-md-6">
+      <h3 class="chart-header">By SLOC  <i class="icon icon-info-sign" rel="popover" data-placement="top" data-trigger="hover" data-content="Source Lines of Code / Logical Lines of Code" data-original-title="SLOC/LSLOC" data-container="body"></i></h3>
+      <div id="fn-by-sloc" class="stat"></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <textarea id="file-source" class="col-md-12">const express = require(&#039;express&#039;);
+const { Sequelize, DataTypes } = require(&#039;sequelize&#039;);
+const path = require(&#039;path&#039;);
+
+const app = express();
+app.set(&#039;view engine&#039;, &#039;ejs&#039;);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(&#039;public&#039;));
+app.use(&#039;/static&#039;, express.static(path.join(__dirname, &#039;static&#039;)));
+
+const sequelize = new Sequelize(&#039;dormitories&#039;, &#039;postgres&#039;, &#039;31220566&#039;, {
+  dialect: &#039;postgres&#039;,
+  host: &#039;localhost&#039;,
+  
+});
+
+// Опис моделей
+const Faculty = sequelize.define(&#039;Faculty&#039;, {
+  faculty_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: DataTypes.STRING,
+}, { tableName: &#039;faculties&#039;, freezeTableName: true,  timestamps: false });
+
+const Specialty = sequelize.define(&#039;Specialty&#039;, {
+  specialty_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: DataTypes.STRING,
+  faculty_id: DataTypes.INTEGER, 
+}, { tableName: &#039;specialties&#039;, freezeTableName: true, timestamps: false });
+
+const Benefit = sequelize.define(&#039;Benefit&#039;, {
+  benefit_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  name: DataTypes.STRING,
+}, { tableName: &#039;benefits&#039;, freezeTableName: true, timestamps: false });
+
+
+Faculty.hasMany(Specialty, { foreignKey: &#039;faculty_id&#039; });
+Specialty.belongsTo(Faculty, { foreignKey: &#039;faculty_id&#039; });
+
+
+const Application = sequelize.define(
+  &#039;Application&#039;,
+  {
+    application_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    first_name: DataTypes.STRING,
+    middle_name: DataTypes.STRING,
+    last_name: DataTypes.STRING,
+    date_of_birth: DataTypes.DATE,
+    home_address: DataTypes.STRING,
+    home_city: DataTypes.STRING, 
+    home_region: DataTypes.STRING,
+    home_street_number: DataTypes.STRING,
+    home_campus_number: DataTypes.STRING, 
+    phone_number: DataTypes.STRING,
+    email: DataTypes.STRING,
+    faculty_id: DataTypes.INTEGER,
+    specialty_id: DataTypes.INTEGER,
+    benefit_id: DataTypes.INTEGER,
+    
+  },
+  {
+    tableName: &#039;Applications&#039;,
+    timestamps: true, // Встановіть як true, щоб увімкнути createdAt та updatedAt
+  }
+);
+
+const Dormitories = sequelize.define(&#039;Dormitories&#039;, {
+    dormitory_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    superintendent_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    floor_amount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    type_residents: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  
+  },
+  {
+    tableName: &#039;dormitories&#039;,
+    timestamps: false
+  }
+  );
+
+const Price = sequelize.define(&#039;Price&#039;, {
+    price_id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    price_amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+    },
+    dormitory_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: &#039;price&#039;,
+    timestamps: false
+  }
+);
+
+// Роути для отримання даних та обробки заявок
+app.get(&#039;/fetch-select-data/faculties&#039;, async (req, res) =&gt; {
+  try {
+    const faculties = await Faculty.findAll({ attributes: [&#039;faculty_id&#039;, &#039;name&#039;] });
+    res.json(faculties);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get(&#039;/fetch-select-data/specialties/:facultyId&#039;, async (req, res) =&gt; {
+  const facultyId = req.params.facultyId;
+
+  try {
+    const specialties = await Specialty.findAll({
+      where: { faculty_id: facultyId },
+      attributes: [&#039;specialty_id&#039;, &#039;name&#039;] // Вибирайте лише існуючі поля
+    });
+    res.json(specialties);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+app.get(&#039;/fetch-select-data/benefits&#039;, async (req, res) =&gt; {
+  try {
+    const benefits = await Benefit.findAll({ attributes: [&#039;benefit_id&#039;, &#039;name&#039;] });
+    res.json(benefits);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post(&#039;/submit_application&#039;, async (req, res) =&gt; {
+  try {
+    const {
+      first_name,
+      middle_name,
+      last_name,
+      date_of_birth,
+      home_address,
+      home_street_number,
+      home_campus_number,
+      home_city,
+      home_region,
+      phone_number,
+      email,
+      faculty_name,
+      specialty_name,
+      benefit_name,
+    } = req.body;
+
+
+    // Отримання відповідних ID з бази даних за обраними назвами
+    const faculty = await Faculty.findOne({ where: { faculty_id: faculty_name } });
+    const specialty = await Specialty.findOne({ where: { specialty_id: specialty_name } });
+    const benefit = await Benefit.findOne({ where: { benefit_id: benefit_name } });
+
+    const faculty_id = faculty ? faculty.faculty_id : null;
+    const specialty_id = specialty ? specialty.specialty_id : null;
+    const benefit_id = benefit ? benefit.benefit_id : null;
+
+    if (!faculty_id || !specialty_id || !benefit_id) {
+      return res.status(400).json({ error: &#039;Невірні або відсутні дані для створення заявки.&#039; });
+    }
+
+    // Створення нової заявки з отриманими ID
+    const newApplication = await Application.create({
+      first_name,
+      middle_name,
+      last_name,
+      date_of_birth,
+      home_address,
+      home_street_number,
+      home_campus_number,
+      home_city,
+      home_region,
+      phone_number,
+      email,
+      faculty_id,
+      specialty_id,
+      benefit_id,
+    });
+
+    res.json({ message: &#039;Заявка успішно подана&#039; });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get(&#039;/dormitories/:id&#039;, async (req, res) =&gt; {
+  const dormitoryId = req.params.id;
+
+  try {
+    const dormitory = await Dormitories.findByPk(dormitoryId);
+
+    if (!dormitory) {
+      return res.status(404).json({ error: &#039;Гуртожиток не знайдено&#039; });
+    }
+
+    // Приклад відправки даних назад на клієнт
+    res.json({
+      name: dormitory.name,
+      address: dormitory.address,
+      phone_number: dormitory.phone_number,
+      type_residents: dormitory.type_residents,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(&#039;Помилка сервера&#039;);
+  }
+});
+
+
+app.get(&#039;/prices&#039;, async (req, res) =&gt; {
+  try {
+    const prices = await Price.findAll();
+    res.json(prices);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(&#039;Помилка сервера&#039;);
+  }
+});
+
+// Підключення до бази даних та запуск сервера
+if (process.env.NODE_ENV !== &#039;test&#039;) {
+  sequelize.authenticate()
+    .then(() =&gt; {
+      console.log(&#039;Connection established&#039;);
+      app.listen(5500, () =&gt; {
+        console.log(&#039;Server running on port 5500&#039;);
+      });
+    })
+    .catch(err =&gt; {
+      console.error(&#039;Database connection failed:&#039;, err);
+    });
+}
+
+module.exports = {
+  app,
+  sequelize,
+  Faculty,
+  Specialty,
+  Benefit,
+  Application,
+  Dormitories,
+  Price
+};</textarea>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container">
+    <p>.</p>
+  </div>
+</footer>
+
+<script type="text/html" id="complexity-popover-template">
+  <div class="complexity-notice">
+    Complexity : {{ cyclomatic }} <br>
+    Length : {{ halstead.length }} <br>
+    Difficulty : {{ halstead.difficulty.toFixed(2) }} <br>
+    Est # bugs : {{ halstead.bugs.toFixed(2) }}<br>
+  </div>
+</script>
+
+<script type="text/javascript" src="../../assets/scripts/bundles/core-bundle.js"></script>
+<script type="text/javascript" src="../../assets/scripts/bundles/codemirror.js"></script>
+<script type="text/javascript" src="../../assets/scripts/codemirror.markpopovertext.js"></script>
+<script type="text/javascript" src="report.js"></script>
+<script type="text/javascript" src="report.history.js"></script>
+<script type="text/javascript" src="../../assets/scripts/plato-file.js"></script>
+</body>
+</html>
